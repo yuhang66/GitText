@@ -29,12 +29,12 @@ import java.util.Map;
 public class FaceDB {
 	private final String TAG = this.getClass().toString();
 
-	public static String appid = "xxx";
-	public static String ft_key = "xxx";
-	public static String fd_key = "xxx";
-	public static String fr_key = "xxx";
-	public static String age_key = "xxx";
-	public static String gender_key = "xxx";
+	public static String appid = "613zkK1f5i2DqRj3X1bm55JnHGgW5P7YTGoyxqia7j1A";
+	public static String ft_key = "2NFQsENpBgssBZEhg6MqHK4jcpW4v37xXcwpRin4NCcA";
+	public static String fd_key = "2NFQsENpBgssBZEhg6MqHK4rnDmGLnv88tFJPRTewjdZ";
+	public static String fr_key = "2NFQsENpBgssBZEhg6MqHK5MRpovPkx73Tky36D73h5J";
+//	public static String age_key = "2NFQsENpBgssBZEhg6MqHK5bkdLFukqEBMWvwAHNokAw";
+//	public static String gender_key = "2NFQsENpBgssBZEhg6MqHK5iv2bVRrhEFthuk1RLohoq";
 
 	String mDBPath;
 	List<FaceRegist> mRegister;
@@ -53,6 +53,7 @@ public class FaceDB {
 	}
 
 	public FaceDB(String path) {
+		Log.i("textssss","FaceDB");
 		mDBPath = path;
 		mRegister = new ArrayList<>();
 		mFRVersion = new AFR_FSDKVersion();
@@ -65,6 +66,9 @@ public class FaceDB {
 			mFREngine.AFR_FSDK_GetVersion(mFRVersion);
 			Log.d(TAG, "AFR_FSDK_GetVersion=" + mFRVersion.toString());
 		}
+		Log.i("textssss","mRegister"+mRegister.size());
+		Log.i("textssss","mDBPath"+mDBPath);
+
 	}
 
 	public void destroy() {
@@ -74,6 +78,7 @@ public class FaceDB {
 	}
 
 	private boolean saveInfo() {
+		Log.i("textssss","saveInfo");
 		try {
 			FileOutputStream fs = new FileOutputStream(mDBPath + "/face.txt");
 			ExtOutputStream bos = new ExtOutputStream(fs);
@@ -90,6 +95,7 @@ public class FaceDB {
 	}
 
 	private boolean loadInfo() {
+		Log.i("textssss","loadInfo");
 		if (!mRegister.isEmpty()) {
 			return false;
 		}
@@ -121,21 +127,30 @@ public class FaceDB {
 	}
 
 	public boolean loadFaces(){
+		Log.i("textssss","loadFaces");
 		if (loadInfo()) {
 			try {
+				Log.i("textssss","mRegister"+mRegister);
 				for (FaceRegist face : mRegister) {
 					Log.d(TAG, "load name:" + face.mName + "'s face feature data.");
 					FileInputStream fs = new FileInputStream(mDBPath + "/" + face.mName + ".data");
 					ExtInputStream bos = new ExtInputStream(fs);
 					AFR_FSDKFace afr = null;
+					int i=0;
 					do {
 						if (afr != null) {
 							if (mUpgrade) {
 								//upgrade data.
 							}
-							String keyFile = bos.readString();
+							//String keyFile = bos.readString();
+							String keyFile = String.valueOf(i);
+							Log.i("textssss","keyFile"+keyFile);
+							for(byte num :afr.getFeatureData()){
+                                Log.i("textssss","afr"+num);
+                            }
 							face.mFaceList.put(keyFile, afr);
 						}
+						i++;
 						afr = new AFR_FSDKFace();
 					} while (bos.readBytes(afr.getFeatureData()));
 					bos.close();
@@ -153,6 +168,7 @@ public class FaceDB {
 	}
 
 	public	void addFace(String name, AFR_FSDKFace face, Bitmap faceicon) {
+		Log.i("textssss","addFace");
 		try {
 			// save face
 			String keyPath = mDBPath + "/" + System.nanoTime() + ".jpg";
@@ -163,7 +179,7 @@ public class FaceDB {
 			}
 			stream.close();
 
-			//check if already registered.
+			//check if already registered.   检查是否注册过
 			boolean add = true;
 			for (FaceRegist frface : mRegister) {
 				if (frface.mName.equals(name)) {
@@ -172,7 +188,7 @@ public class FaceDB {
 					break;
 				}
 			}
-			if (add) { // not registered.
+			if (add) { // not registered. 没有注册过
 				FaceRegist frface = new FaceRegist(name);
 				frface.mFaceList.put(keyPath, face);
 				mRegister.add(frface);
@@ -204,6 +220,7 @@ public class FaceDB {
 	}
 
 	public boolean delete(String name) {
+		Log.i("textssss","delete");
 		try {
 			//check if already registered.
 			boolean find = false;

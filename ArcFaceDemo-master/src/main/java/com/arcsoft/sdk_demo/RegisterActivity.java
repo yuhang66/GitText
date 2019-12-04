@@ -107,7 +107,7 @@ public class RegisterActivity extends Activity implements SurfaceHolder.Callback
 					}
 				}
 
-				byte[] data = new byte[mBitmap.getWidth() * mBitmap.getHeight() * 3 / 2];
+				byte[] data = new byte[mBitmap.getWidth() * mBitmap.getHeight() * 3 / 2];//字节
 				try {
 					ImageConverter convert = new ImageConverter();
 					convert.initial(mBitmap.getWidth(), mBitmap.getHeight(), ImageConverter.CP_PAF_NV21);
@@ -194,6 +194,7 @@ public class RegisterActivity extends Activity implements SurfaceHolder.Callback
 					Log.d("com.arcsoft", "Face=" + result1.getFeatureData()[0] + "," + result1.getFeatureData()[1] + "," + result1.getFeatureData()[2] + "," + error1.getCode());
 					if(error1.getCode() == error1.MOK) {
 						mAFR_FSDKFace = result1.clone();
+						mAFR_FSDKFace.getFeatureData();
 						int width = result.get(0).getRect().width();
 						int height = result.get(0).getRect().height();
 						Bitmap face_bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
